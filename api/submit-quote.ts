@@ -13,7 +13,7 @@ app.post('/api/submit-quote', upload.single('billFile'), async (req, res) => {
     const file = req.file;
 
     console.log("Received Quote Request:", data);
-    
+
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     const attachments = [];
@@ -38,14 +38,23 @@ app.post('/api/submit-quote', upload.single('billFile'), async (req, res) => {
     `;
 
     if (process.env.RESEND_API_KEY) {
-      await resend.emails.send({
+      const { data: resendData, error: resendError } = await resend.emails.send({
         from: 'Quote Requests <quotes@solar.eshtiak.me>',
-        to: 'info@logiqon.tech',
+        to: ['info@logiqon.tech', 'u4upstair@gmail.com'],
         subject: `New Quote Request — ${data.name}`,
         html,
         attachments,
       });
-      console.log("Email sent successfully via Resend");
+
+      console.log("Resend response:", resendData);
+      console.log("Resend error:", resendError);
+
+      if (resendError) {
+        console.error("Resend API Error:", resendError);
+        throw new Error(JSON.stringify(resendError));
+      }
+
+      console.log("Email sent successfully");
     } else {
       console.log("No RESEND_API_KEY configured. Skipping actual email send. Email content:");
       console.log(html);
