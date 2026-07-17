@@ -39,8 +39,8 @@ app.post('/api/submit-quote', upload.single('billFile'), async (req, res) => {
 
     if (process.env.RESEND_API_KEY) {
       const { data: resendData, error: resendError } = await resend.emails.send({
-        from: 'Quote Requests <quotes@solar.eshtiak.me>',
-        to: ['info@logiqon.tech', 'u4upstair@gmail.com'],
+        from: 'Quote Request <quotes@solar.eshtiak.me>',
+        to: ['info@logiqon.tech' ],
         subject: `New Quote Request — ${data.name}`,
         html,
         attachments,
